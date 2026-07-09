@@ -40,6 +40,18 @@ This repo is **private**. Install requires GitHub access:
 
 `uv` uses your system git credentials to clone the private repo.
 
+### CI/CD (consumer repos)
+
+Consumer workflows (`SyncQues-Backend`, `SyncQues-Resume`) need a GitHub org secret:
+
+| Secret | Value |
+|--------|-------|
+| `GH_PRIVATE_REPO_TOKEN` | Fine-grained or classic PAT with **read** access to `SyncQues-Resume-Renderer` |
+
+Create at: **GitHub → SyncQues org → Settings → Secrets and variables → Actions**
+
+The token is injected before `uv sync` so private git dependencies resolve in CI.
+
 ### Local development (optional)
 
 For active template work, use an editable path override without changing the committed pin:
