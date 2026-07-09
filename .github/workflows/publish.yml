@@ -26,7 +26,11 @@ jobs:
       - name: Run tests
         run: uv sync --dev && uv run pytest
 
-      - name: Build and publish to PyPI
+      - name: Build package
+        run: uv build
+
+      - name: Publish to PyPI
         env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: uv build && uv publish
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv run twine upload dist/*
