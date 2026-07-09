@@ -1,0 +1,29 @@
+[project]
+name = "syncques-resume-renderer"
+version = "1.0.0"
+description = "Shared resume HTML/PDF rendering for SyncQues services"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "pydantic>=2.12.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+syncques_resume_renderer = ["templates/html/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

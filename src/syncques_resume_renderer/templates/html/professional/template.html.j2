@@ -1,0 +1,208 @@
+{% from '_macros.html.j2' import external_link %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ document.basics.full_name }} — Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>{{ css_content }}</style>
+  {% if interactive %}
+  <style>
+    [data-resume-section] { cursor: pointer; border-radius: 2px; }
+    [data-resume-section]:hover { background: rgba(0, 51, 153, 0.05); }
+  </style>
+  {% endif %}
+</head>
+<body>
+  <main class="resume-page">
+    <header class="resume-header" data-resume-section="basics">
+      <h1 class="resume-name">{{ document.basics.full_name }}</h1>
+      <div class="resume-contact">
+        {% set ns = namespace(first=true) %}
+        {% if document.basics.email %}
+          {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+          <a href="mailto:{{ document.basics.email }}">{{ document.basics.email }}</a>
+          {% set ns.first = false %}
+        {% endif %}
+        {% if document.basics.phone %}
+          {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+          <a href="tel:{{ document.basics.phone }}">{{ document.basics.phone }}</a>
+          {% set ns.first = false %}
+        {% endif %}
+        {% if document.basics.location %}
+          {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+          <span>{{ document.basics.location }}</span>
+          {% set ns.first = false %}
+        {% endif %}
+        {% if document.basics.syncques_url %}
+          {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+          {{ external_link('syncques', document.basics.syncques_url) }}
+          {% set ns.first = false %}
+        {% endif %}
+        {% for platform, url in document.basics.social_links.items() %}
+          {% if url %}
+            {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+            {{ external_link(platform, url) }}
+            {% set ns.first = false %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </header>
+
+    {% if document.basics.summary %}
+      <section class="resume-section" data-resume-section="basics">
+        <h2 class="resume-section-title">Professional Summary</h2>
+        <p class="resume-summary">{{ document.basics.summary }}</p>
+      </section>
+    {% endif %}
+
+    {% if document.sections.skills.categorized or document.sections.skills.flat %}
+      <section class="resume-section" data-resume-section="skills">
+        <h2 class="resume-section-title">Technical Skills</h2>
+        {% if document.sections.skills.categorized %}
+          <div class="skills-block">
+            {% for category, skills in document.sections.skills.categorized.items() %}
+              {% if skills %}
+                <p class="skill-line"><strong>{{ category }}:</strong> {{ skills | join(', ') }}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% elif document.sections.skills.flat %}
+          <p class="skill-inline">{{ document.sections.skills.flat | join(' · ') }}</p>
+        {% endif %}
+      </section>
+    {% endif %}
+
+    {% if document.sections.experience %}
+      <section class="resume-section" data-resume-section="experience">
+        <h2 class="resume-section-title">Work Experience</h2>
+        {% for exp in document.sections.experience %}
+          <article class="entry">
+            <div class="entry-header">
+              <div class="entry-heading">
+                <h3 class="entry-title">
+                  {{ exp.title }}{% if exp.company %} at {{ exp.company }}{% endif %}{% if exp.location %}, {{ exp.location }}{% endif %}
+                </h3>
+              </div>
+              {% if exp.start_date or exp.end_date %}
+                <div class="entry-date">
+                  {{ exp.start_date | format_resume_date }}{% if exp.start_date or exp.end_date %} – {% endif %}{{ exp.end_date | format_resume_date }}
+                </div>
+              {% endif %}
+            </div>
+            {% if exp.description %}
+              <ul class="entry-bullets">
+                {% for line in exp.description.replace('\\n', '\n').split('\n') %}
+                  {% set bullet = line.strip().lstrip('•').lstrip('-').lstrip('–').strip() %}
+                  {% if bullet %}
+                    <li>{{ bullet }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if document.sections.education %}
+      <section class="resume-section" data-resume-section="education">
+        <h2 class="resume-section-title">Education</h2>
+        {% for edu in document.sections.education %}
+          <article class="entry">
+            <div class="entry-header">
+              <div class="entry-heading">
+                <h3 class="entry-title">{{ edu.institution }}</h3>
+                <p class="entry-subtitle">
+                  {{ edu.degree }}{% if edu.field_of_study %} in {{ edu.field_of_study }}{% endif %}
+                  {%- if edu.location %} · {{ edu.location }}{% endif -%}
+                </p>
+              </div>
+              {% if edu.start_date or edu.end_date %}
+                <div class="entry-date">
+                  {{ edu.start_date | format_resume_date }}{% if edu.start_date or edu.end_date %} – {% endif %}{{ edu.end_date | format_resume_date }}
+                </div>
+              {% endif %}
+            </div>
+            {% if edu.gpa or edu.description %}
+              <p class="entry-detail">
+                {% if edu.gpa %}<em>GPA:</em> {{ edu.gpa }}{% endif %}
+                {% if edu.gpa and edu.description %} · {% endif %}
+                {% if edu.description %}{{ edu.description }}{% endif %}
+              </p>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if document.sections.projects %}
+      <section class="resume-section" data-resume-section="projects">
+        <h2 class="resume-section-title">Projects</h2>
+        {% for proj in document.sections.projects %}
+          <article class="entry">
+            <div class="entry-header">
+              <h3 class="entry-title">{{ proj.title }}</h3>
+              {% if proj.repository_url or proj.project_url %}
+                <div class="entry-links">
+                  {% if proj.repository_url %}
+                    {{ external_link('github', proj.repository_url, 'Repository') }}
+                  {% endif %}
+                  {% if proj.project_url %}
+                    {{ external_link('live', proj.project_url, 'Live') }}
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+            {% if proj.description %}
+              <ul class="entry-bullets">
+                {% for line in proj.description.replace('\\n', '\n').split('\n') %}
+                  {% set bullet = line.strip().lstrip('•').lstrip('-').lstrip('–').strip() %}
+                  {% if bullet %}
+                    <li>{{ bullet }}</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% if proj.technologies %}
+              <p class="entry-detail"><em>Technologies:</em> {{ proj.technologies | join(', ') }}</p>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if document.sections.achievements %}
+      <section class="resume-section" data-resume-section="achievements">
+        <h2 class="resume-section-title">Achievements &amp; Certifications</h2>
+        {% for ach in document.sections.achievements %}
+          <article class="entry">
+            <div class="entry-header">
+              <div class="entry-heading">
+                <h3 class="entry-title">{{ ach.title }}</h3>
+                {% if ach.organization %}
+                  <p class="entry-meta">{{ ach.organization }}</p>
+                {% endif %}
+              </div>
+              {% if ach.date_earned %}
+                <div class="entry-date">{{ ach.date_earned | format_resume_date }}</div>
+              {% endif %}
+            </div>
+            {% if ach.description %}
+              <p class="entry-detail">{{ ach.description }}</p>
+            {% endif %}
+            {% if ach.credential_url %}
+              <div class="entry-links">
+                {{ external_link('credential', ach.credential_url, 'View Credential') }}
+              </div>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+  </main>
+</body>
+</html>

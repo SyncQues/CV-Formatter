@@ -1,0 +1,12 @@
+{% macro external_link(platform, url, fallback='') %}
+  {% set href = url | format_external_url %}
+  {% if href %}
+    <a href="{{ href }}" class="resume-external-link">
+      {% set favicon = url | resume_favicon_url %}
+      {% if favicon %}
+        <img src="{{ favicon }}" alt="" class="resume-link-icon" width="12" height="12" />
+      {% endif %}
+      <span>{{ resume_link_label(platform, url, fallback) }}</span>
+    </a>
+  {% endif %}
+{% endmacro %}
