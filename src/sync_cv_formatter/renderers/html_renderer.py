@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from syncques_resume_renderer.schemas.resume_document import ResumeDocument, ResumeTemplateId
+from sync_cv_formatter.schemas.resume_document import ResumeDocument, ResumeTemplateId
 
 _PKG_DIR = Path(__file__).resolve().parent.parent
 HTML_TEMPLATES_DIR = _PKG_DIR / "templates" / "html"

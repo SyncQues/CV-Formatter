@@ -1,4 +1,4 @@
-from syncques_resume_renderer.schemas.resume_document import (
+from sync_cv_formatter.schemas.resume_document import (
     AchievementItem,
     BasicsSection,
     EducationItem,

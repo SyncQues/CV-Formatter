@@ -1,17 +1,35 @@
 [project]
-name = "syncques-resume-renderer"
-version = "1.1.0"
-description = "Shared resume HTML/PDF rendering for SyncQues services"
+name = "sync_cv_formatter"
+version = "1.2.0"
+description = "CV/resume HTML and PDF rendering with hiring-manager-focused templates"
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "SyncQues" }]
+keywords = ["resume", "cv", "pdf", "html", "jinja2"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Text Processing :: Markup :: HTML",
+]
 dependencies = [
     "jinja2>=3.1.6",
     "pydantic>=2.12.3",
 ]
 
+[project.urls]
+Homepage = "https://github.com/SyncQues/CV-Formatter"
+Repository = "https://github.com/SyncQues/CV-Formatter"
+Issues = "https://github.com/SyncQues/CV-Formatter/issues"
+
 [dependency-groups]
 dev = [
+    "build>=1.2",
     "pytest>=8.3",
+    "twine>=6.1",
 ]
 
 [build-system]
@@ -22,7 +40,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-syncques_resume_renderer = ["templates/html/**/*"]
+sync_cv_formatter = ["templates/html/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

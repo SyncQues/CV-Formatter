@@ -1,85 +1,69 @@
-# syncques-resume-renderer
+# CV Formatter
 
-Private shared package — single source of truth for SyncQues resume templates, schemas, and HTML rendering.
+Public Python package for resume/CV HTML and PDF rendering — single source of truth for SyncQues resume templates, schemas, and rendering.
 
-**Repository:** https://github.com/SyncQues/SyncQues-Resume-Renderer (private)
+**Repository:** https://github.com/SyncQues/CV-Formatter  
+**PyPI:** https://pypi.org/project/sync_cv_formatter/
+
+## Install
+
+```bash
+pip install sync_cv_formatter
+# or
+uv add sync_cv_formatter
+```
 
 ## Consumers
 
 - `SyncQues-Backend` — recompile and live preview
 - `SyncQues-Resume` — initial resume generation
 
-## Install (private git dependency)
+## Usage
 
-Add to consumer `pyproject.toml`:
+```python
+from sync_cv_formatter import ResumeDocument, populate_html_template, render_html_to_pdf
 
-```toml
-dependencies = [
-    "syncques-resume-renderer==1.0.0",
-]
-
-[tool.uv.sources]
-syncques-resume-renderer = { git = "https://github.com/SyncQues/SyncQues-Resume-Renderer.git", tag = "v1.0.0" }
+document = ResumeDocument.model_validate(content_json)
+html = populate_html_template(document, template_id="modern")
+pdf_bytes = render_html_to_pdf(html)
 ```
 
-Then:
+## Templates
+
+| ID | Style |
+|----|-------|
+| `professional` | Centered serif, traditional |
+| `executive` | Experience-first, navy serif/sans |
+| `modern` | Inter sans-serif, teal accent |
+| `classic` | Times New Roman, ATS-maximum |
+| `compact` | Dense one-page, IBM Plex |
+
+Legacy `creative` maps to `modern`.
+
+## Local development
 
 ```bash
-uv sync
+uv sync --dev
+uv run pytest
 ```
 
-### Authentication
-
-This repo is **private**. Install requires GitHub access:
-
-| Environment | Setup |
-|-------------|-------|
-| **Local dev** | `gh auth login` or SSH key with repo access |
-| **CI/CD** | `GITHUB_TOKEN` with `contents:read` on this repo |
-| **Deploy** | Machine user PAT or org deploy key (read-only) |
-
-`uv` uses your system git credentials to clone the private repo.
-
-### CI/CD (consumer repos)
-
-Consumer workflows (`SyncQues-Backend`, `SyncQues-Resume`) need a GitHub org secret:
-
-| Secret | Value |
-|--------|-------|
-| `GH_PRIVATE_REPO_TOKEN` | Fine-grained or classic PAT with **read** access to `SyncQues-Resume-Renderer` |
-
-Create at: **GitHub → SyncQues org → Settings → Secrets and variables → Actions**
-
-The token is injected before `uv sync` so private git dependencies resolve in CI.
-
-### Local development (optional)
-
-For active template work, use an editable path override without changing the committed pin:
+Editable install from a checkout:
 
 ```bash
-uv add --editable ../SyncQues-Resume-Renderer
+uv add --editable ../CV-Formatter
 ```
-
-Revert to the git source before merging consumer changes.
 
 ## Release process
 
 1. Change templates/code in this repo
 2. Bump `version` in `pyproject.toml`
 3. Run `uv run pytest`
-4. Commit, tag (`git tag v1.0.1`), push tag
-5. Update `tag` pin in Backend + Resume `pyproject.toml`
-6. `uv sync` in both consumers
+4. Commit, tag (`git tag v1.2.1`), push tag
+5. GitHub Actions publishes to PyPI (or `uv build && uv publish`)
+6. Bump pin in Backend + Resume `pyproject.toml` and `uv lock`
 
 ## Versioning
 
 - **MAJOR** — breaking `content_json` schema changes
 - **MINOR** — template/CSS changes or new optional fields
 - **PATCH** — bug fixes
-
-## Tests
-
-```bash
-uv sync --dev
-uv run pytest
-```

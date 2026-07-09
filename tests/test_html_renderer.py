@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from syncques_resume_renderer.renderers.html_renderer import populate_html_template
-from syncques_resume_renderer.schemas.resume_document import (
+from sync_cv_formatter.renderers.html_renderer import populate_html_template
+from sync_cv_formatter.schemas.resume_document import (
     BasicsSection,
     ExperienceItem,
     ResumeDocument,
