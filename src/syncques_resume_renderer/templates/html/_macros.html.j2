@@ -1,3 +1,34 @@
+{% macro resume_contact(document) %}
+  {% set ns = namespace(first=true) %}
+  {% if document.basics.email %}
+    {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+    <a href="mailto:{{ document.basics.email }}">{{ document.basics.email }}</a>
+    {% set ns.first = false %}
+  {% endif %}
+  {% if document.basics.phone %}
+    {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+    <a href="tel:{{ document.basics.phone }}">{{ document.basics.phone }}</a>
+    {% set ns.first = false %}
+  {% endif %}
+  {% if document.basics.location %}
+    {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+    <span>{{ document.basics.location }}</span>
+    {% set ns.first = false %}
+  {% endif %}
+  {% if document.basics.syncques_url %}
+    {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+    {{ external_link('syncques', document.basics.syncques_url) }}
+    {% set ns.first = false %}
+  {% endif %}
+  {% for platform, url in document.basics.social_links.items() %}
+    {% if url %}
+      {% if not ns.first %}<span class="contact-sep">·</span>{% endif %}
+      {{ external_link(platform, url) }}
+      {% set ns.first = false %}
+    {% endif %}
+  {% endfor %}
+{% endmacro %}
+
 {% macro external_link(platform, url, fallback='') %}
   {% set href = url | format_external_url %}
   {% if href %}

@@ -145,7 +145,14 @@ def _resume_link_label(
 
 TEMPLATE_DIRS: dict[ResumeTemplateId, str] = {
     "professional": "professional",
-    "creative": "creative",
+    "executive": "executive",
+    "modern": "modern",
+    "classic": "classic",
+    "compact": "compact",
+}
+
+_LEGACY_TEMPLATE_ALIASES: dict[str, ResumeTemplateId] = {
+    "creative": "modern",
 }
 
 
@@ -169,13 +176,26 @@ def _load_css(template_id: ResumeTemplateId) -> str:
     return css_path.read_text(encoding="utf-8")
 
 
+def _resolve_template_id(
+    template_id: str | ResumeTemplateId | None,
+    *,
+    fallback: ResumeTemplateId = "professional",
+) -> ResumeTemplateId:
+    normalized = str(template_id or fallback).strip().lower()
+    if normalized in _LEGACY_TEMPLATE_ALIASES:
+        return _LEGACY_TEMPLATE_ALIASES[normalized]
+    if normalized in TEMPLATE_DIRS:
+        return normalized  # type: ignore[return-value]
+    return fallback
+
+
 def populate_html_template(
     document: ResumeDocument,
     template_id: ResumeTemplateId | None = None,
     *,
     interactive: bool = False,
 ) -> str:
-    selected_template = template_id or document.template_id
+    selected_template = _resolve_template_id(template_id or document.template_id)
     env = _get_template_env(selected_template)
     template = env.get_template("template.html.j2")
     return template.render(

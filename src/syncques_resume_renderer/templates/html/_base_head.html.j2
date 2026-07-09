@@ -1,0 +1,10 @@
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{ document.basics.full_name }} — Resume</title>
+<style>{{ css_content }}</style>
+{% if interactive %}
+<style>
+  [data-resume-section] { cursor: pointer; border-radius: 2px; }
+  [data-resume-section]:hover { background: rgba(0, 51, 153, 0.05); }
+</style>
+{% endif %}

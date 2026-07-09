@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-ResumeTemplateId = Literal["professional", "creative"]
+ResumeTemplateId = Literal["professional", "executive", "modern", "classic", "compact"]
 ResumeTypeValue = Literal["standard", "ats_optimized"]
 
 

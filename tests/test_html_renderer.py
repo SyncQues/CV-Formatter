@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import pytest
+
 from syncques_resume_renderer.renderers.html_renderer import populate_html_template
 from syncques_resume_renderer.schemas.resume_document import (
     BasicsSection,
@@ -50,3 +52,27 @@ def test_populate_html_template_includes_interactive_sections():
 
     assert 'data-resume-section="experience"' in html
     assert "cursor: pointer" in html
+
+
+@pytest.mark.parametrize(
+    "template_id",
+    ["professional", "executive", "modern", "classic", "compact"],
+)
+def test_populate_html_template_renders_all_templates(template_id: str):
+    document = _sample_document()
+    document.template_id = template_id  # type: ignore[assignment]
+
+    html = populate_html_template(document, template_id=template_id)  # type: ignore[arg-type]
+
+    assert "Jane Doe" in html
+    assert "Built APIs" in html
+    assert "<html" in html.lower()
+
+
+def test_legacy_creative_template_maps_to_modern():
+    document = _sample_document()
+    document.template_id = "creative"  # type: ignore[assignment]
+
+    html = populate_html_template(document)
+
+    assert 'class="resume-header-accent"' in html

@@ -4,16 +4,19 @@
 <head>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   {% include '_base_head.html.j2' %}
 </head>
 <body>
   <main class="resume-page">
     <header class="resume-header" data-resume-section="basics">
-      <h1 class="resume-name">{{ document.basics.full_name }}</h1>
-      <div class="resume-contact">{{ resume_contact(document) }}</div>
+      <div class="resume-header-accent"></div>
+      <div class="resume-header-content">
+        <h1 class="resume-name">{{ document.basics.full_name }}</h1>
+        <div class="resume-contact">{{ resume_contact(document) }}</div>
+      </div>
     </header>
-    {% include '_sections.html.j2' %}
+    {% include '_sections_experience_first.html.j2' %}
   </main>
 </body>
 </html>
