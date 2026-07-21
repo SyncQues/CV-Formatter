@@ -15,9 +15,25 @@
               </p>
             {% endif %}
           </div>
-          {% if item.start_date or item.end_date %}
-            <div class="entry-date">
-              {{ item.start_date | format_resume_date }}{% if item.start_date or item.end_date %} – {% endif %}{{ item.end_date | format_resume_date }}
+          {# Right column: date on top, one or more links below. #}
+          {% set has_dates = item.start_date or item.end_date %}
+          {% set has_links = item.links and item.links|length > 0 %}
+          {% if has_dates or has_links %}
+            <div class="entry-aside">
+              {% if has_dates %}
+                <div class="entry-date">
+                  {{ item.start_date | format_resume_date }}{% if item.start_date or item.end_date %} – {% endif %}{{ item.end_date | format_resume_date }}
+                </div>
+              {% endif %}
+              {% if has_links %}
+                <div class="entry-links">
+                  {% for link in item.links %}
+                    {% if link.url %}
+                      {{ external_link('link', link.url, link.label or 'Link') }}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
             </div>
           {% endif %}
         </div>
@@ -30,11 +46,6 @@
               {% endif %}
             {% endfor %}
           </ul>
-        {% endif %}
-        {% if item.link_url %}
-          <div class="entry-links">
-            {{ external_link('link', item.link_url, item.link_label or 'Link') }}
-          </div>
         {% endif %}
       </article>
     {% endfor %}

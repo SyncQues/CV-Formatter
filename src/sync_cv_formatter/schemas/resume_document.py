@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 ResumeTemplateId = Literal["professional", "executive", "modern", "classic", "compact"]
 ResumeTypeValue = Literal["standard", "ats_optimized"]
@@ -77,6 +77,13 @@ class AchievementItem(BaseModel):
     credential_url: str | None = None
 
 
+class CustomSectionLink(BaseModel):
+    """One external link on a custom section entry (paper, demo, repo, …)."""
+
+    url: str = ""
+    label: str | None = None
+
+
 class CustomSectionEntry(BaseModel):
     """Single entry inside a user-defined custom section."""
 
@@ -86,8 +93,30 @@ class CustomSectionEntry(BaseModel):
     start_date: str | None = None
     end_date: str | None = None
     description: str | None = None
+    # Preferred multi-link field (date above, links below on the right).
+    links: list[CustomSectionLink] = Field(default_factory=list)
+    # Legacy single-link fields — migrated into `links` on validate.
     link_url: str | None = None
     link_label: str | None = None
+
+    @model_validator(mode="after")
+    def _migrate_legacy_link(self) -> "CustomSectionEntry":
+        cleaned = [link for link in self.links if (link.url or "").strip()]
+        if cleaned:
+            object.__setattr__(self, "links", cleaned[:5])
+            return self
+        if self.link_url and self.link_url.strip():
+            object.__setattr__(
+                self,
+                "links",
+                [
+                    CustomSectionLink(
+                        url=self.link_url.strip(),
+                        label=self.link_label,
+                    )
+                ],
+            )
+        return self
 
 
 class CustomSection(BaseModel):
