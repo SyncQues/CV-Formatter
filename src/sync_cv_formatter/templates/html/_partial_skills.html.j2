@@ -1,0 +1,16 @@
+{% if document.sections.skills.categorized or document.sections.skills.flat %}
+  <section class="resume-section" data-resume-section="skills">
+    <h2 class="resume-section-title">Technical Skills</h2>
+    {% if document.sections.skills.categorized %}
+      <div class="skills-block">
+        {% for category, skills in document.sections.skills.categorized.items() %}
+          {% if skills %}
+            <p class="skill-line"><strong>{{ category }}:</strong> {{ skills | join(', ') }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% elif document.sections.skills.flat %}
+      <p class="skill-inline">{{ document.sections.skills.flat | join(' · ') }}</p>
+    {% endif %}
+  </section>
+{% endif %}

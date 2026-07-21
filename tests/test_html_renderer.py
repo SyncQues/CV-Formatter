@@ -2,9 +2,14 @@ from datetime import datetime, timezone
 
 import pytest
 
-from sync_cv_formatter.renderers.html_renderer import populate_html_template
+from sync_cv_formatter.renderers.html_renderer import (
+    populate_html_template,
+    resolve_body_section_order,
+)
 from sync_cv_formatter.schemas.resume_document import (
     BasicsSection,
+    CustomSection,
+    CustomSectionEntry,
     ExperienceItem,
     ResumeDocument,
     ResumeDocumentMetadata,
@@ -76,3 +81,111 @@ def test_legacy_creative_template_maps_to_modern():
     html = populate_html_template(document)
 
     assert 'class="resume-header-accent"' in html
+
+
+def test_custom_sections_render_in_html():
+    document = _sample_document()
+    document.sections.custom = [
+        CustomSection(
+            id="opensource-1",
+            title="Opensource",
+            items=[
+                CustomSectionEntry(
+                    title="Redis",
+                    location="Hyderabad",
+                    start_date="Jun 2026",
+                    end_date="Present",
+                    description="Contributed core module fixes\nImproved docs",
+                    link_url="https://www.youtube.com/",
+                    link_label="Youtube",
+                )
+            ],
+        )
+    ]
+    document.sections.section_order = [
+        "skills",
+        "experience",
+        "education",
+        "projects",
+        "achievements",
+        "custom:opensource-1",
+    ]
+
+    html = populate_html_template(document, template_id="professional")
+
+    assert "Opensource" in html
+    assert "Redis" in html
+    assert "Hyderabad" in html
+    assert "Contributed core module fixes" in html
+    assert 'data-resume-section="custom:opensource-1"' in html
+    assert "https://www.youtube.com/" in html
+
+
+def test_section_order_places_custom_before_skills():
+    document = _sample_document()
+    document.sections.custom = [
+        CustomSection(
+            id="vol-1",
+            title="Volunteer",
+            items=[CustomSectionEntry(title="Mentor", description="Helped juniors")],
+        )
+    ]
+    document.sections.section_order = [
+        "custom:vol-1",
+        "experience",
+        "skills",
+        "education",
+        "projects",
+        "achievements",
+    ]
+
+    order = resolve_body_section_order(document, "professional")
+    assert order[0] == "custom:vol-1"
+    assert order.index("experience") < order.index("skills")
+
+    html = populate_html_template(document, template_id="professional")
+    volunteer_pos = html.index("Volunteer")
+    skills_pos = html.index("Technical Skills")
+    assert volunteer_pos < skills_pos
+
+
+def test_model_validate_preserves_custom_sections():
+    payload = {
+        "schema_version": "1.0",
+        "template_id": "professional",
+        "basics": {"full_name": "Test", "email": "t@e.com"},
+        "sections": {
+            "skills": {"flat": [], "categorized": {}},
+            "experience": [],
+            "education": [],
+            "projects": [],
+            "achievements": [],
+            "custom": [
+                {
+                    "id": "abc",
+                    "title": "Opensource",
+                    "items": [
+                        {
+                            "title": "Redis",
+                            "description": "did stuff",
+                            "link_url": "https://example.com",
+                        }
+                    ],
+                }
+            ],
+            "section_order": ["custom:abc", "skills"],
+        },
+        "metadata": {
+            "generated_at": "2026-07-21T00:00:00+00:00",
+            "resume_type": "standard",
+            "content_version": 1,
+        },
+    }
+    document = ResumeDocument.model_validate(payload)
+    assert len(document.sections.custom) == 1
+    assert document.sections.custom[0].title == "Opensource"
+    assert document.sections.section_order[0] == "custom:abc"
+
+    html = populate_html_template(document)
+    assert "Opensource" in html
+    assert "Redis" in html

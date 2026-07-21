@@ -1,0 +1,31 @@
+{% if document.sections.experience %}
+  <section class="resume-section" data-resume-section="experience">
+    <h2 class="resume-section-title">Work Experience</h2>
+    {% for exp in document.sections.experience %}
+      <article class="entry">
+        <div class="entry-header">
+          <div class="entry-heading">
+            <h3 class="entry-title">
+              {{ exp.title }}{% if exp.company %} at {{ exp.company }}{% endif %}{% if exp.location %}, {{ exp.location }}{% endif %}
+            </h3>
+          </div>
+          {% if exp.start_date or exp.end_date %}
+            <div class="entry-date">
+              {{ exp.start_date | format_resume_date }}{% if exp.start_date or exp.end_date %} – {% endif %}{{ exp.end_date | format_resume_date }}
+            </div>
+          {% endif %}
+        </div>
+        {% if exp.description %}
+          <ul class="entry-bullets">
+            {% for line in exp.description.replace('\\n', '\n').split('\n') %}
+              {% set bullet = line.strip().lstrip('•').lstrip('-').lstrip('–').strip() %}
+              {% if bullet %}
+                <li>{{ bullet }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+{% endif %}

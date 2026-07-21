@@ -1,0 +1,42 @@
+{# Expects `custom` in scope: a CustomSection with at least one item. #}
+{% if custom and custom.items %}
+  <section class="resume-section" data-resume-section="custom:{{ custom.id }}">
+    <h2 class="resume-section-title">{{ custom.title or 'Custom section' }}</h2>
+    {% for item in custom.items %}
+      <article class="entry">
+        <div class="entry-header">
+          <div class="entry-heading">
+            <h3 class="entry-title">{{ item.title }}</h3>
+            {% if item.subtitle or item.location %}
+              <p class="entry-subtitle">
+                {%- if item.subtitle %}{{ item.subtitle }}{% endif -%}
+                {%- if item.subtitle and item.location %} · {% endif -%}
+                {%- if item.location %}{{ item.location }}{% endif -%}
+              </p>
+            {% endif %}
+          </div>
+          {% if item.start_date or item.end_date %}
+            <div class="entry-date">
+              {{ item.start_date | format_resume_date }}{% if item.start_date or item.end_date %} – {% endif %}{{ item.end_date | format_resume_date }}
+            </div>
+          {% endif %}
+        </div>
+        {% if item.description %}
+          <ul class="entry-bullets">
+            {% for line in item.description.replace('\\n', '\n').split('\n') %}
+              {% set bullet = line.strip().lstrip('•').lstrip('-').lstrip('–').strip() %}
+              {% if bullet %}
+                <li>{{ bullet }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if item.link_url %}
+          <div class="entry-links">
+            {{ external_link('link', item.link_url, item.link_label or 'Link') }}
+          </div>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+{% endif %}

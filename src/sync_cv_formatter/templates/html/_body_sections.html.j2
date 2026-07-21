@@ -1,0 +1,27 @@
+{% from '_macros.html.j2' import external_link %}
+
+{% if document.basics.summary %}
+  <section class="resume-section" data-resume-section="basics">
+    <h2 class="resume-section-title">Professional Summary</h2>
+    <p class="resume-summary">{{ document.basics.summary }}</p>
+  </section>
+{% endif %}
+
+{% for section_id in body_section_order %}
+  {% if section_id == 'skills' %}
+    {% include '_partial_skills.html.j2' %}
+  {% elif section_id == 'experience' %}
+    {% include '_partial_experience.html.j2' %}
+  {% elif section_id == 'education' %}
+    {% include '_partial_education.html.j2' %}
+  {% elif section_id == 'projects' %}
+    {% include '_partial_projects.html.j2' %}
+  {% elif section_id == 'achievements' %}
+    {% include '_partial_achievements.html.j2' %}
+  {% elif section_id.startswith('custom:') %}
+    {% set custom_id = section_id[7:] %}
+    {% for custom in document.sections.custom if custom.id == custom_id %}
+      {% include '_partial_custom.html.j2' %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
