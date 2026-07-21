@@ -4,7 +4,16 @@ from urllib.parse import urlparse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from sync_cv_formatter.schemas.resume_document import ResumeDocument, ResumeTemplateId
+from sync_cv_formatter.schemas.resume_document import (
+    BUILTIN_BODY_SECTION_IDS,
+    DEFAULT_BODY_SECTION_ORDER,
+    EXPERIENCE_FIRST_BODY_SECTION_ORDER,
+    ResumeDocument,
+    ResumeTemplateId,
+)
+
+_EXPERIENCE_FIRST_TEMPLATES: frozenset[str] = frozenset({"executive", "modern"})
+_BUILTIN_BODY_SECTION_SET: frozenset[str] = frozenset(BUILTIN_BODY_SECTION_IDS)
 
 _PKG_DIR = Path(__file__).resolve().parent.parent
 HTML_TEMPLATES_DIR = _PKG_DIR / "templates" / "html"
@@ -189,6 +198,54 @@ def _resolve_template_id(
     return fallback
 
 
+def resolve_body_section_order(
+    document: ResumeDocument,
+    template_id: ResumeTemplateId,
+) -> list[str]:
+    """Merge stored section_order with builtins and custom sections.
+
+    Matches the frontend editor preview: stored order wins, missing builtins
+    and custom sections are appended, deleted custom ids are dropped.
+    """
+    defaults = (
+        EXPERIENCE_FIRST_BODY_SECTION_ORDER
+        if template_id in _EXPERIENCE_FIRST_TEMPLATES
+        else DEFAULT_BODY_SECTION_ORDER
+    )
+    custom_ids = {section.id for section in document.sections.custom if section.id}
+    result: list[str] = []
+    seen: set[str] = set()
+
+    def push(section_id: str) -> None:
+        if section_id in seen:
+            return
+        if section_id in _BUILTIN_BODY_SECTION_SET:
+            seen.add(section_id)
+            result.append(section_id)
+            return
+        if section_id.startswith("custom:"):
+            custom_id = section_id[len("custom:") :]
+            if custom_id and custom_id in custom_ids:
+                seen.add(section_id)
+                result.append(section_id)
+
+    for raw in document.sections.section_order or []:
+        if not isinstance(raw, str):
+            continue
+        trimmed = raw.strip()
+        if trimmed:
+            push(trimmed)
+
+    for default_id in defaults:
+        push(default_id)
+
+    for section in document.sections.custom:
+        if section.id:
+            push(f"custom:{section.id}")
+
+    return result
+
+
 def populate_html_template(
     document: ResumeDocument,
     template_id: ResumeTemplateId | None = None,
@@ -202,6 +259,7 @@ def populate_html_template(
         document=document,
         css_content=_load_css(selected_template),
         interactive=interactive,
+        body_section_order=resolve_body_section_order(document, selected_template),
     )
 
 

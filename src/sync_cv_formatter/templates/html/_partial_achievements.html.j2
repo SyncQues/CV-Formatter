@@ -1,0 +1,28 @@
+{% if document.sections.achievements %}
+  <section class="resume-section" data-resume-section="achievements">
+    <h2 class="resume-section-title">Achievements &amp; Certifications</h2>
+    {% for ach in document.sections.achievements %}
+      <article class="entry">
+        <div class="entry-header">
+          <div class="entry-heading">
+            <h3 class="entry-title">{{ ach.title }}</h3>
+            {% if ach.organization %}
+              <p class="entry-meta">{{ ach.organization }}</p>
+            {% endif %}
+          </div>
+          {% if ach.date_earned %}
+            <div class="entry-date">{{ ach.date_earned | format_resume_date }}</div>
+          {% endif %}
+        </div>
+        {% if ach.description %}
+          <p class="entry-detail">{{ ach.description }}</p>
+        {% endif %}
+        {% if ach.credential_url %}
+          <div class="entry-links">
+            {{ external_link('credential', ach.credential_url, 'View Credential') }}
+          </div>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+{% endif %}

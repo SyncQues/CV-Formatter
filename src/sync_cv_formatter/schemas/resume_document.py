@@ -6,6 +6,23 @@ from pydantic import BaseModel, Field
 ResumeTemplateId = Literal["professional", "executive", "modern", "classic", "compact"]
 ResumeTypeValue = Literal["standard", "ats_optimized"]
 
+BUILTIN_BODY_SECTION_IDS: tuple[str, ...] = (
+    "skills",
+    "experience",
+    "education",
+    "projects",
+    "achievements",
+)
+
+DEFAULT_BODY_SECTION_ORDER: tuple[str, ...] = BUILTIN_BODY_SECTION_IDS
+EXPERIENCE_FIRST_BODY_SECTION_ORDER: tuple[str, ...] = (
+    "experience",
+    "skills",
+    "education",
+    "projects",
+    "achievements",
+)
+
 
 class BasicsSection(BaseModel):
     full_name: str = ""
@@ -60,12 +77,36 @@ class AchievementItem(BaseModel):
     credential_url: str | None = None
 
 
+class CustomSectionEntry(BaseModel):
+    """Single entry inside a user-defined custom section."""
+
+    title: str = ""
+    subtitle: str | None = None
+    location: str | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    description: str | None = None
+    link_url: str | None = None
+    link_label: str | None = None
+
+
+class CustomSection(BaseModel):
+    """User-defined section (Volunteer, Publications, Languages, etc.)."""
+
+    id: str = ""
+    title: str = ""
+    items: list[CustomSectionEntry] = Field(default_factory=list)
+
+
 class ResumeSections(BaseModel):
     skills: SkillsSection = Field(default_factory=SkillsSection)
     experience: list[ExperienceItem] = Field(default_factory=list)
     education: list[EducationItem] = Field(default_factory=list)
     projects: list[ProjectItem] = Field(default_factory=list)
     achievements: list[AchievementItem] = Field(default_factory=list)
+    custom: list[CustomSection] = Field(default_factory=list)
+    # Builtin keys and/or `custom:<id>` tokens controlling body section order.
+    section_order: list[str] = Field(default_factory=list)
 
 
 class ResumeDocumentMetadata(BaseModel):

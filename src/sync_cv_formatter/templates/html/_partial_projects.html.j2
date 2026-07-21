@@ -1,0 +1,35 @@
+{% if document.sections.projects %}
+  <section class="resume-section" data-resume-section="projects">
+    <h2 class="resume-section-title">Projects</h2>
+    {% for proj in document.sections.projects %}
+      <article class="entry">
+        <div class="entry-header">
+          <h3 class="entry-title">{{ proj.title }}</h3>
+          {% if proj.repository_url or proj.project_url %}
+            <div class="entry-links">
+              {% if proj.repository_url %}
+                {{ external_link('github', proj.repository_url, 'Repository') }}
+              {% endif %}
+              {% if proj.project_url %}
+                {{ external_link('live', proj.project_url, 'Live') }}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+        {% if proj.description %}
+          <ul class="entry-bullets">
+            {% for line in proj.description.replace('\\n', '\n').split('\n') %}
+              {% set bullet = line.strip().lstrip('•').lstrip('-').lstrip('–').strip() %}
+              {% if bullet %}
+                <li>{{ bullet }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if proj.technologies %}
+          <p class="entry-detail"><em>Technologies:</em> {{ proj.technologies | join(', ') }}</p>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+{% endif %}
