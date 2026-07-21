@@ -119,6 +119,54 @@ def test_custom_sections_render_in_html():
     assert "Contributed core module fixes" in html
     assert 'data-resume-section="custom:opensource-1"' in html
     assert "https://www.youtube.com/" in html
+    # Link is in the right-side header column (under date), not below description
+    assert 'class="entry-aside"' in html
+    aside_start = html.index('class="entry-aside"')
+    desc_start = html.index("Contributed core module fixes")
+    link_start = html.index("https://www.youtube.com/")
+    assert aside_start < link_start < desc_start
+    date_in_aside = html.index("entry-date", aside_start)
+    links_in_aside = html.index("entry-links", aside_start)
+    assert date_in_aside < links_in_aside
+
+
+def test_custom_section_multiple_links_render_under_date():
+    from sync_cv_formatter.schemas.resume_document import CustomSectionLink
+
+    document = _sample_document()
+    document.sections.custom = [
+        CustomSection(
+            id="oss-2",
+            title="Open Source",
+            items=[
+                CustomSectionEntry(
+                    title="Cool Project",
+                    start_date="2026-02",
+                    end_date="2026-01",
+                    description="Did things",
+                    links=[
+                        CustomSectionLink(url="https://github.com/example/repo", label="Repo"),
+                        CustomSectionLink(url="https://example.com/demo", label="Demo"),
+                    ],
+                )
+            ],
+        )
+    ]
+    document.sections.section_order = ["custom:oss-2", "skills"]
+
+    html = populate_html_template(document, template_id="professional")
+
+    assert "Repo" in html
+    assert "Demo" in html
+    assert "https://github.com/example/repo" in html
+    assert "https://example.com/demo" in html
+    aside_start = html.index('class="entry-aside"')
+    date_idx = html.index("entry-date", aside_start)
+    links_idx = html.index("entry-links", aside_start)
+    repo_idx = html.index("https://github.com/example/repo")
+    demo_idx = html.index("https://example.com/demo")
+    desc_idx = html.index("Did things")
+    assert date_idx < links_idx < repo_idx < demo_idx < desc_idx
 
 
 def test_section_order_places_custom_before_skills():

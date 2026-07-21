@@ -130,6 +130,10 @@ _DOMAIN_LABEL_PATTERNS: list[tuple[str, str]] = [
 def _resume_link_label(
     platform_or_kind: str, url: str | None = None, fallback: str | None = None
 ) -> str:
+    # Explicit labels from the editor (custom multi-links, "Repository", …) win.
+    if fallback and str(fallback).strip():
+        return str(fallback).strip()
+
     platform_key = platform_or_kind.lower().replace(" ", "_")
     if platform_key in _PLATFORM_LABELS:
         return _PLATFORM_LABELS[platform_key]
@@ -145,9 +149,6 @@ def _resume_link_label(
         if domain:
             base = domain.split(".")[0]
             return base[:1].upper() + base[1:]
-
-    if fallback:
-        return fallback
 
     return platform_or_kind.replace("_", " ").title()
 
