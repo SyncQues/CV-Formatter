@@ -107,5 +107,20 @@ body {
 .entry-detail { margin: 2px 0 0; font-size: 10pt; line-height: 1.35; }
 .entry-detail em { font-style: italic; font-weight: 400; color: var(--text); }
 
-@page { size: A4; margin: 0; }
-@media print { .entry { break-inside: avoid; } }
+@page {
+  size: A4;
+  margin: 12mm 16mm;
+}
+
+
+@media print {
+  .resume-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .entry {
+    break-inside: avoid;
+  }
+}

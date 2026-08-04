@@ -120,5 +120,30 @@ body {
 .entry-detail { margin: 2px 0 0; font-size: 9.5pt; line-height: 1.4; }
 .entry-detail em { font-style: normal; font-weight: 700; color: var(--text); }
 
-@page { size: A4; margin: 0; }
-@media print { .entry { break-inside: avoid; } }
+@page {
+  size: A4;
+  margin: 12mm 13mm 11mm;
+}
+
+
+@media print {
+  .resume-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .resume-header-band {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .resume-page > .resume-section,
+  .resume-page > section {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .entry {
+    break-inside: avoid;
+  }
+}
