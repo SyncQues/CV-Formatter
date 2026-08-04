@@ -2,7 +2,17 @@ from datetime import datetime, timezone
 
 import pytest
 
+from typing import get_args
+
+from sync_cv_formatter import (
+    DEFAULT_TEMPLATE_ID,
+    assert_catalog_integrity,
+    is_experience_first,
+    list_templates,
+    template_ids,
+)
 from sync_cv_formatter.renderers.html_renderer import (
+    TEMPLATE_DIRS,
     populate_html_template,
     resolve_body_section_order,
 )
@@ -14,6 +24,7 @@ from sync_cv_formatter.schemas.resume_document import (
     ResumeDocument,
     ResumeDocumentMetadata,
     ResumeSections,
+    ResumeTemplateId,
     SkillsSection,
 )
 
@@ -59,10 +70,30 @@ def test_populate_html_template_includes_interactive_sections():
     assert "cursor: pointer" in html
 
 
-@pytest.mark.parametrize(
-    "template_id",
-    ["professional", "executive", "modern", "classic", "compact"],
-)
+ALL_TEMPLATE_IDS = sorted(template_ids())
+
+
+def test_catalog_integrity_and_public_api():
+    assert_catalog_integrity()
+    catalog = list_templates()
+    assert len(catalog) == 20
+    assert DEFAULT_TEMPLATE_ID == "professional"
+    assert template_ids() == frozenset(get_args(ResumeTemplateId))
+    assert template_ids() == frozenset(TEMPLATE_DIRS)
+    assert is_experience_first("tech") is True
+    assert is_experience_first("professional") is False
+    assert all(item.label and item.swatch for item in catalog)
+    premium = {item.id for item in catalog if item.premium}
+    assert len(premium) == 15  # 10 industry premium + 5 creative batch
+    assert "professional" not in premium
+    assert "tech" in premium and "portfolio" in premium
+    # Premium tier is listed first for picker UX
+    first_free = next(i for i, item in enumerate(catalog) if not item.premium)
+    assert all(item.premium for item in catalog[:first_free])
+    assert all(not item.premium for item in catalog[first_free:])
+
+
+@pytest.mark.parametrize("template_id", ALL_TEMPLATE_IDS)
 def test_populate_html_template_renders_all_templates(template_id: str):
     document = _sample_document()
     document.template_id = template_id  # type: ignore[assignment]
@@ -72,15 +103,38 @@ def test_populate_html_template_renders_all_templates(template_id: str):
     assert "Jane Doe" in html
     assert "Built APIs" in html
     assert "<html" in html.lower()
+    assert "resume-page" in html
 
 
-def test_legacy_creative_template_maps_to_modern():
+def test_creative_is_first_class_template():
+    """creative is a real template (no longer an alias to modern)."""
     document = _sample_document()
     document.template_id = "creative"  # type: ignore[assignment]
 
     html = populate_html_template(document)
 
-    assert 'class="resume-header-accent"' in html
+    assert "resume-header-mark" in html
+    assert "Outfit" in html
+
+
+@pytest.mark.parametrize(
+    ("template_id", "marker"),
+    [
+        ("portfolio", "resume-name-rule"),
+        ("editorial", "resume-masthead"),
+        ("studio", "resume-header-chip"),
+        ("noir", "resume-header-accent"),
+        ("aurora", "resume-header-aurora"),
+    ],
+)
+def test_creative_batch_has_distinct_chrome(template_id: str, marker: str):
+    document = _sample_document()
+    document.template_id = template_id  # type: ignore[assignment]
+
+    html = populate_html_template(document, template_id=template_id)  # type: ignore[arg-type]
+
+    assert marker in html
+    assert "Jane Doe" in html
 
 
 def test_custom_sections_render_in_html():
