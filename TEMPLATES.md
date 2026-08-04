@@ -26,7 +26,7 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
 
 ---
 
-## Core set (original 5)
+## Core set (original 5) — `premium: true`
 
 | ID | Design rationale |
 |----|------------------|
@@ -38,8 +38,8 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
 
 ## Premium set
 
-> **Total premium templates: 15** (10 industry + 5 creative batch).  
-> Flag is catalog metadata for FE badges / billing. **This package does not enforce tier at render time** — consumers gate access.
+> **Total premium templates: 15** (5 core + 10 industry).  
+> Free tier is the creative batch of 5. Flag is catalog metadata for FE badges / billing. **This package does not enforce tier at render time** — consumers gate access.
 
 ### Industry (10) — `premium: true`
 
@@ -56,7 +56,7 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
 | `bold` | Sales, marketing leadership | Black band + amber underline | High visual impact for results-driven narratives |
 | `consulting` | Strategy, MBB, advisory | Tight navy serif/sans mix | Dense impact bullets, low decoration — case-interview ready |
 
-### Creative batch (5) — also `premium: true`
+### Creative batch (5) — free (`premium: false`)
 
 | ID | Inspired by | Layout cues | Best for |
 |----|-------------|-------------|----------|

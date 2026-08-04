@@ -79,7 +79,7 @@ ALL_TEMPLATE_IDS = sorted(template_ids())
 def test_catalog_integrity_and_public_api():
     assert_catalog_integrity()
     catalog = list_templates()
-    # Breakdown: 5 free core + 10 industry premium + 5 creative premium = 20
+    # Breakdown: 5 free creative batch + 5 core premium + 10 industry premium = 20
     assert len(catalog) == 20
     assert DEFAULT_TEMPLATE_ID == "professional"
     assert template_ids() == frozenset(get_args(ResumeTemplateId))
@@ -89,15 +89,19 @@ def test_catalog_integrity_and_public_api():
     assert all(item.label and item.swatch for item in catalog)
     premium = premium_template_ids()
     free = free_template_ids()
-    assert len(premium) == 15  # 10 industry + 5 creative batch
+    assert len(premium) == 15  # 5 core + 10 industry
     assert len(free) == 5
+    assert free == frozenset(
+        {"portfolio", "editorial", "studio", "noir", "aurora"}
+    )
     assert premium | free == template_ids()
     assert premium.isdisjoint(free)
     assert is_premium("tech") is True
-    assert is_premium("professional") is False
+    assert is_premium("professional") is True
+    assert is_premium("portfolio") is False
     assert is_premium(None) is False
-    assert "professional" not in premium
-    assert "tech" in premium and "portfolio" in premium
+    assert "professional" in premium
+    assert "tech" in premium and "portfolio" not in premium
     # Premium tier is listed first for picker UX
     first_free = next(i for i, item in enumerate(catalog) if not item.premium)
     assert all(item.premium for item in catalog[:first_free])

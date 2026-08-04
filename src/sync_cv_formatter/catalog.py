@@ -43,10 +43,15 @@ class ResumeTemplateMeta(BaseModel):
     """Hint for client-side paper mocks: standard | accent_rail | dark_header | timeline | sparse | creative | academic | compact."""
 
 
-# Premium tier: original 10 industry batch + 5 creative batch.
-# Core free set (professional, executive, modern, classic, compact) stays non-premium.
+# Premium tier: core 5 + 10 industry batch.
+# Creative batch (portfolio, editorial, studio, noir, aurora) stays non-premium.
 _PREMIUM_TEMPLATE_IDS: frozenset[str] = frozenset(
     {
+        "professional",
+        "executive",
+        "modern",
+        "classic",
+        "compact",
         "tech",
         "finance",
         "creative",
@@ -57,11 +62,6 @@ _PREMIUM_TEMPLATE_IDS: frozenset[str] = frozenset(
         "timeline",
         "bold",
         "consulting",
-        "portfolio",
-        "editorial",
-        "studio",
-        "noir",
-        "aurora",
     }
 )
 

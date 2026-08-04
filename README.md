@@ -43,15 +43,15 @@ Backend exposes the same catalog at `GET /api/v1/resume/templates`.
 
 **20 templates** total. Design notes live in [`TEMPLATES.md`](./TEMPLATES.md).
 
-**Premium tier (metadata only):** 15 templates carry `premium: true` for picker badges and billing UX (10 industry + 5 creative batch). The five free templates are `professional`, `executive`, `modern`, `classic`, and `compact`. This package is a **renderer only** — it does not gate rendering on tier; consumers (Backend / FE) enforce paid access using catalog helpers such as `is_premium()` and `list_templates()`.
+**Premium tier (metadata only):** 15 templates carry `premium: true` for picker badges and billing UX (5 core + 10 industry). The five free templates are the creative batch: `portfolio`, `editorial`, `studio`, `noir`, and `aurora`. This package is a **renderer only** — it does not gate rendering on tier; consumers (Backend / FE) enforce paid access using catalog helpers such as `is_premium()` and `list_templates()`.
 
 | ID | Style | Best for | Tier |
 |----|-------|----------|------|
-| `professional` | Centered serif, traditional | Corporate, general | Free |
-| `executive` | Experience-first, navy serif/sans | Senior leadership | Free |
-| `modern` | Inter sans-serif, teal accent | Product, startups | Free |
-| `classic` | Times New Roman, ATS-maximum | Government, law | Free |
-| `compact` | Dense one-page, IBM Plex | Long career history | Free |
+| `professional` | Centered serif, traditional | Corporate, general | Premium |
+| `executive` | Experience-first, navy serif/sans | Senior leadership | Premium |
+| `modern` | Inter sans-serif, teal accent | Product, startups | Premium |
+| `classic` | Times New Roman, ATS-maximum | Government, law | Premium |
+| `compact` | Dense one-page, IBM Plex | Long career history | Premium |
 | `tech` | Mono accents, indigo rail | Engineering, tech | Premium |
 | `finance` | Baskerville + navy/gold | Banking, investment | Premium |
 | `creative` | Outfit, terracotta accent | Design, marketing | Premium |
@@ -62,11 +62,11 @@ Backend exposes the same catalog at `GET /api/v1/resume/templates`.
 | `timeline` | Vertical timeline rail | Career progression | Premium |
 | `bold` | Black header + amber underline | Sales, marketing | Premium |
 | `consulting` | Tight navy strategy style | Consulting, strategy | Premium |
-| `portfolio` | Fraunces display, violet→pink gradient | Designers, PDs | Premium |
-| `editorial` | Playfair masthead, rose accent | Writing, media | Premium |
-| `studio` | Soft card header, magenta pills | Freelancers | Premium |
-| `noir` | Cinematic black band, fuchsia→cyan | Film, fashion | Premium |
-| `aurora` | Teal→indigo gradient rail, Sora | UX eng, creative tech | Premium |
+| `portfolio` | Fraunces display, violet→pink gradient | Designers, PDs | Free |
+| `editorial` | Playfair masthead, rose accent | Writing, media | Free |
+| `studio` | Soft card header, magenta pills | Freelancers | Free |
+| `noir` | Cinematic black band, fuchsia→cyan | Film, fashion | Free |
+| `aurora` | Teal→indigo gradient rail, Sora | UX eng, creative tech | Free |
 
 ## Local development
 
