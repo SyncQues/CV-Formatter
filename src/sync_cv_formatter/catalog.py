@@ -3,6 +3,9 @@
 Consumers (Backend, Frontend via API) should list templates from here rather than
 hardcoding ids. Adding a template means: add files under templates/html/<id>/,
 register in TEMPLATE_DIRS + ResumeTemplateId, and add a row to TEMPLATE_CATALOG.
+
+Premium is **metadata only** for badges / billing UX. This package is a renderer;
+tier enforcement (who may select a premium id) is the consumer's responsibility.
 """
 
 from __future__ import annotations
@@ -353,7 +356,7 @@ _CATALOG_BY_ID: dict[str, ResumeTemplateMeta] = {item.id: item for item in TEMPL
 
 
 def list_templates() -> list[ResumeTemplateMeta]:
-    """Return all public templates in display order."""
+    """Return all public templates ordered premium-first, then free (stable picker UX)."""
     return list(TEMPLATE_CATALOG)
 
 
@@ -377,6 +380,22 @@ def is_experience_first(template_id: str | None) -> bool:
 
 def experience_first_template_ids() -> frozenset[str]:
     return frozenset(item.id for item in TEMPLATE_CATALOG if item.experience_first)
+
+
+def is_premium(template_id: str | None) -> bool:
+    """Whether the template is in the paid / premium catalog tier (metadata only)."""
+    meta = get_template_meta(template_id)
+    return bool(meta and meta.premium)
+
+
+def premium_template_ids() -> frozenset[str]:
+    """Ids stamped premium=True for FE badges and consumer-side access checks."""
+    return frozenset(item.id for item in TEMPLATE_CATALOG if item.premium)
+
+
+def free_template_ids() -> frozenset[str]:
+    """Ids that are not in the premium catalog tier."""
+    return frozenset(item.id for item in TEMPLATE_CATALOG if not item.premium)
 
 
 def assert_catalog_integrity() -> None:
@@ -407,8 +426,11 @@ __all__ = [
     "TEMPLATE_CATALOG",
     "assert_catalog_integrity",
     "experience_first_template_ids",
+    "free_template_ids",
     "get_template_meta",
     "is_experience_first",
+    "is_premium",
     "list_templates",
+    "premium_template_ids",
     "template_ids",
 ]

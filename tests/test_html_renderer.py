@@ -7,8 +7,11 @@ from typing import get_args
 from sync_cv_formatter import (
     DEFAULT_TEMPLATE_ID,
     assert_catalog_integrity,
+    free_template_ids,
     is_experience_first,
+    is_premium,
     list_templates,
+    premium_template_ids,
     template_ids,
 )
 from sync_cv_formatter.renderers.html_renderer import (
@@ -76,6 +79,7 @@ ALL_TEMPLATE_IDS = sorted(template_ids())
 def test_catalog_integrity_and_public_api():
     assert_catalog_integrity()
     catalog = list_templates()
+    # Breakdown: 5 free core + 10 industry premium + 5 creative premium = 20
     assert len(catalog) == 20
     assert DEFAULT_TEMPLATE_ID == "professional"
     assert template_ids() == frozenset(get_args(ResumeTemplateId))
@@ -83,8 +87,15 @@ def test_catalog_integrity_and_public_api():
     assert is_experience_first("tech") is True
     assert is_experience_first("professional") is False
     assert all(item.label and item.swatch for item in catalog)
-    premium = {item.id for item in catalog if item.premium}
-    assert len(premium) == 15  # 10 industry premium + 5 creative batch
+    premium = premium_template_ids()
+    free = free_template_ids()
+    assert len(premium) == 15  # 10 industry + 5 creative batch
+    assert len(free) == 5
+    assert premium | free == template_ids()
+    assert premium.isdisjoint(free)
+    assert is_premium("tech") is True
+    assert is_premium("professional") is False
+    assert is_premium(None) is False
     assert "professional" not in premium
     assert "tech" in premium and "portfolio" in premium
     # Premium tier is listed first for picker UX

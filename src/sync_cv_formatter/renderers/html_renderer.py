@@ -175,9 +175,18 @@ TEMPLATE_DIRS: dict[ResumeTemplateId, str] = {
     "aurora": "aurora",
 }
 
-# Historical aliases for ids retired or renamed. `creative` is a first-class
-# template as of 1.4.0; keep this map for any future deprecations.
+# Historical aliases for ids retired or renamed. Empty as of 1.5.0:
+# `creative` is a first-class template (no longer maps to modern).
 _LEGACY_TEMPLATE_ALIASES: dict[str, ResumeTemplateId] = {}
+
+# Compat for private consumers; prefer catalog.experience_first_template_ids().
+def _load_experience_first_templates() -> frozenset[str]:
+    from sync_cv_formatter.catalog import experience_first_template_ids
+
+    return experience_first_template_ids()
+
+
+_EXPERIENCE_FIRST_TEMPLATES: frozenset[str] = _load_experience_first_templates()
 
 
 def _get_template_env(template_id: ResumeTemplateId) -> Environment:
@@ -270,6 +279,7 @@ def populate_html_template(
     *,
     interactive: bool = False,
 ) -> str:
+    """Render resume HTML. Does not enforce premium tier — any valid id renders."""
     selected_template = _resolve_template_id(template_id or document.template_id)
     env = _get_template_env(selected_template)
     template = env.get_template("template.html.j2")

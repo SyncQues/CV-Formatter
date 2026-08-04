@@ -36,7 +36,12 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
 | `classic` | Maximum ATS (Times, uppercase name, black/white) for strict parsers |
 | `compact` | Dense one-pager for 10+ year careers that must stay on one page |
 
-## Premium set (10) — `premium: true` in catalog / API / FE badge
+## Premium set
+
+> **Total premium templates: 15** (10 industry + 5 creative batch).  
+> Flag is catalog metadata for FE badges / billing. **This package does not enforce tier at render time** — consumers gate access.
+
+### Industry (10) — `premium: true`
 
 | ID | Industry / level | Layout cues | Why it converts |
 |----|------------------|-------------|-----------------|
@@ -51,7 +56,7 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
 | `bold` | Sales, marketing leadership | Black band + amber underline | High visual impact for results-driven narratives |
 | `consulting` | Strategy, MBB, advisory | Tight navy serif/sans mix | Dense impact bullets, low decoration — case-interview ready |
 
-## Creative batch (5 — new + inspired by current) — also `premium: true`
+### Creative batch (5) — also `premium: true`
 
 | ID | Inspired by | Layout cues | Best for |
 |----|-------------|-------------|----------|
@@ -70,6 +75,7 @@ HR-informed design notes for the **20** production templates in `sync_cv_formatt
    - Add id to `ResumeTemplateId` Literal
    - Register in `TEMPLATE_DIRS`
    - Add `ResumeTemplateMeta` row to `TEMPLATE_CATALOG` in `catalog.py`
+   - **Decide tier:** add the id to `_PREMIUM_TEMPLATE_IDS` in `catalog.py` if it is part of the paid catalog (the flag is stamped onto the meta row automatically)
    - `assert_catalog_integrity()` runs on package import
    - Bump version, `uv run pytest`, publish to PyPI
 2. **Backend / Resume service** — bump `sync-cv-formatter` pin only  

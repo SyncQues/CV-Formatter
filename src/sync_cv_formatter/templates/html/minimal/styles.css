@@ -94,7 +94,7 @@ body {
 .entry-links { font-size: 9pt; white-space: nowrap; flex-shrink: 0; }
 .entry-links a, .resume-external-link { color: var(--text); text-decoration: none; border-bottom: 0.5px solid var(--border); }
 .entry-links a + a::before,
-.entry-links .resume-external-link + .resume-external-link::before { content: "  "; }
+.entry-links .resume-external-link + .resume-external-link::before { content: " · "; }
 
 .resume-external-link { display: inline-flex; align-items: center; gap: 4px; }
 .resume-link-icon { width: 10px; height: 10px; flex-shrink: 0; }
