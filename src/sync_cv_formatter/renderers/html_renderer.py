@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from sync_cv_formatter.catalog import is_experience_first
 from sync_cv_formatter.schemas.resume_document import (
     BUILTIN_BODY_SECTION_IDS,
     DEFAULT_BODY_SECTION_ORDER,
@@ -12,7 +13,6 @@ from sync_cv_formatter.schemas.resume_document import (
     ResumeTemplateId,
 )
 
-_EXPERIENCE_FIRST_TEMPLATES: frozenset[str] = frozenset({"executive", "modern"})
 _BUILTIN_BODY_SECTION_SET: frozenset[str] = frozenset(BUILTIN_BODY_SECTION_IDS)
 
 _PKG_DIR = Path(__file__).resolve().parent.parent
@@ -159,11 +159,26 @@ TEMPLATE_DIRS: dict[ResumeTemplateId, str] = {
     "modern": "modern",
     "classic": "classic",
     "compact": "compact",
+    "tech": "tech",
+    "finance": "finance",
+    "creative": "creative",
+    "healthcare": "healthcare",
+    "minimal": "minimal",
+    "academic": "academic",
+    "sidebar": "sidebar",
+    "timeline": "timeline",
+    "bold": "bold",
+    "consulting": "consulting",
+    "portfolio": "portfolio",
+    "editorial": "editorial",
+    "studio": "studio",
+    "noir": "noir",
+    "aurora": "aurora",
 }
 
-_LEGACY_TEMPLATE_ALIASES: dict[str, ResumeTemplateId] = {
-    "creative": "modern",
-}
+# Historical aliases for ids retired or renamed. Empty as of 1.5.0:
+# `creative` is a first-class template (no longer maps to modern).
+_LEGACY_TEMPLATE_ALIASES: dict[str, ResumeTemplateId] = {}
 
 
 def _get_template_env(template_id: ResumeTemplateId) -> Environment:
@@ -210,7 +225,7 @@ def resolve_body_section_order(
     """
     defaults = (
         EXPERIENCE_FIRST_BODY_SECTION_ORDER
-        if template_id in _EXPERIENCE_FIRST_TEMPLATES
+        if is_experience_first(template_id)
         else DEFAULT_BODY_SECTION_ORDER
     )
     custom_ids = {section.id for section in document.sections.custom if section.id}
@@ -253,6 +268,7 @@ def populate_html_template(
     *,
     interactive: bool = False,
 ) -> str:
+    """Render resume HTML. Does not enforce premium tier — any valid id renders."""
     selected_template = _resolve_template_id(template_id or document.template_id)
     env = _get_template_env(selected_template)
     template = env.get_template("template.html.j2")

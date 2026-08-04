@@ -1,0 +1,165 @@
+:root {
+  --text: #1c1917;
+  --body: #44403c;
+  --muted: #78716c;
+  --accent: #9f1239;
+  --rule: #1c1917;
+  --border: #e7e5e4;
+  --bg: #fffefb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Source Serif 4", "Georgia", "Times New Roman", serif;
+  color: var(--body);
+  background: var(--bg);
+  line-height: 1.48;
+  font-size: 10pt;
+  -webkit-font-smoothing: antialiased;
+}
+
+.resume-page {
+  width: 210mm;
+  margin: 0 auto;
+  padding: 13mm 15mm;
+  background: var(--bg);
+}
+
+.resume-header {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rule);
+  text-align: center;
+}
+
+.resume-masthead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.resume-masthead-label {
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.resume-masthead-rule {
+  display: block;
+  width: 36px;
+  height: 1px;
+  background: var(--rule);
+  opacity: 0.55;
+}
+
+.resume-name {
+  margin: 0;
+  font-family: "Playfair Display", "Georgia", serif;
+  font-size: 26pt;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.resume-contact {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 0;
+  align-items: center;
+  font-size: 9pt;
+  color: var(--muted);
+  font-family: "Source Serif 4", Georgia, serif;
+}
+
+.resume-contact a { color: var(--accent); text-decoration: none; font-weight: 600; }
+.resume-contact a:hover { text-decoration: underline; }
+.resume-contact .contact-sep { margin: 0 8px; color: var(--border); }
+
+.resume-section { margin-bottom: 8px; }
+
+.resume-section-title {
+  margin: 10px 0 5px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 12pt;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+.resume-summary {
+  margin: 0;
+  line-height: 1.55;
+  text-align: justify;
+  font-size: 10pt;
+}
+
+.skills-block { margin: 0; }
+.skill-line { margin: 0 0 2px; font-size: 9.5pt; line-height: 1.4; }
+.skill-line strong { font-weight: 700; color: var(--text); }
+.skill-inline { margin: 0; font-size: 9.5pt; line-height: 1.4; }
+
+.entry { margin-bottom: 7px; }
+.entry:last-child { margin-bottom: 0; }
+
+.entry-header { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.entry-heading { flex: 1; min-width: 0; }
+.entry-title { margin: 0; font-size: 10.5pt; font-weight: 700; color: var(--text); line-height: 1.3; }
+.entry-meta, .entry-subtitle { margin: 1px 0 0; font-size: 9.5pt; color: var(--muted); font-style: italic; }
+.entry-subtitle { font-style: italic; }
+.entry-date {
+  color: var(--accent);
+  font-size: 9pt;
+  white-space: nowrap;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  font-style: normal;
+}
+
+.entry-aside { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; text-align: right; }
+.entry-aside .entry-date, .entry-aside .entry-links { margin-left: 0; }
+
+.entry-bullets { margin: 3px 0 0; padding-left: 1.1em; list-style: disc; }
+.entry-bullets li { margin-bottom: 2px; line-height: 1.4; font-size: 9.5pt; }
+.entry-bullets li::marker { color: var(--accent); }
+
+.entry-links { font-size: 9pt; white-space: nowrap; flex-shrink: 0; }
+.entry-links a, .resume-external-link { color: var(--accent); text-decoration: none; }
+.entry-links a + a::before,
+.entry-links .resume-external-link + .resume-external-link::before { content: " · "; color: var(--muted); }
+
+.resume-external-link { display: inline-flex; align-items: center; gap: 4px; }
+.resume-link-icon { width: 11px; height: 11px; flex-shrink: 0; }
+
+.entry-detail { margin: 2px 0 0; font-size: 9.5pt; line-height: 1.4; }
+.entry-detail em { font-style: italic; font-weight: 600; color: var(--text); }
+
+@page {
+  size: A4;
+  margin: 13mm 15mm;
+}
+
+
+@media print {
+  .resume-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+  .entry {
+    break-inside: avoid;
+  }
+}

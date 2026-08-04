@@ -3,7 +3,29 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
-ResumeTemplateId = Literal["professional", "executive", "modern", "classic", "compact"]
+ResumeTemplateId = Literal[
+    "professional",
+    "executive",
+    "modern",
+    "classic",
+    "compact",
+    "tech",
+    "finance",
+    "creative",
+    "healthcare",
+    "minimal",
+    "academic",
+    "sidebar",
+    "timeline",
+    "bold",
+    "consulting",
+    # Creative batch (distinctive, still single-column / ATS-safe)
+    "portfolio",
+    "editorial",
+    "studio",
+    "noir",
+    "aurora",
+]
 ResumeTypeValue = Literal["standard", "ats_optimized"]
 
 BUILTIN_BODY_SECTION_IDS: tuple[str, ...] = (

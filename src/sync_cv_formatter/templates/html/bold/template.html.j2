@@ -1,0 +1,21 @@
+{% from '_macros.html.j2' import external_link, resume_contact %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  {% include '_base_head.html.j2' %}
+</head>
+<body>
+  <main class="resume-page">
+    <header class="resume-header" data-resume-section="basics">
+      <div class="resume-header-band">
+        <h1 class="resume-name">{{ document.basics.full_name }}</h1>
+        <div class="resume-contact">{{ resume_contact(document) }}</div>
+      </div>
+    </header>
+    {% include '_body_sections.html.j2' %}
+  </main>
+</body>
+</html>

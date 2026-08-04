@@ -257,10 +257,17 @@ body {
 
 @page {
   size: A4;
-  margin: 0;
+  margin: 11mm 13mm;
 }
 
+
 @media print {
+  .resume-page {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
   .entry {
     break-inside: avoid;
   }
