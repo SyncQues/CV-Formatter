@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from sync_cv_formatter.catalog import is_experience_first
 from sync_cv_formatter.schemas.resume_document import (
     BUILTIN_BODY_SECTION_IDS,
     DEFAULT_BODY_SECTION_ORDER,
@@ -179,15 +180,6 @@ TEMPLATE_DIRS: dict[ResumeTemplateId, str] = {
 # `creative` is a first-class template (no longer maps to modern).
 _LEGACY_TEMPLATE_ALIASES: dict[str, ResumeTemplateId] = {}
 
-# Compat for private consumers; prefer catalog.experience_first_template_ids().
-def _load_experience_first_templates() -> frozenset[str]:
-    from sync_cv_formatter.catalog import experience_first_template_ids
-
-    return experience_first_template_ids()
-
-
-_EXPERIENCE_FIRST_TEMPLATES: frozenset[str] = _load_experience_first_templates()
-
 
 def _get_template_env(template_id: ResumeTemplateId) -> Environment:
     template_dir = HTML_TEMPLATES_DIR / TEMPLATE_DIRS[template_id]
@@ -231,9 +223,6 @@ def resolve_body_section_order(
     Matches the frontend editor preview: stored order wins, missing builtins
     and custom sections are appended, deleted custom ids are dropped.
     """
-    # Lazy import avoids circular dependency with catalog → TEMPLATE_DIRS checks.
-    from sync_cv_formatter.catalog import is_experience_first
-
     defaults = (
         EXPERIENCE_FIRST_BODY_SECTION_ORDER
         if is_experience_first(template_id)
